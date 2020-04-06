@@ -22,21 +22,21 @@ These are at the lowest level in the function hierarchy. These functions facilit
 Functions included are:
 - extern int fd;
 - int open_serial_port(const char*,int);
-- int serial_write(int*,const char*);
-- int serial_read(int*);
-- void close_serial_port(int*);
+- int serial_write(int,const char*);
+- int serial_read(int);
+- void close_serial_port(int);
 
 *Error message of -1 is returned from each of the function at the time of encounter. Expect for close_serial_port()*
 
 ### Pin Manipulation functions
 These functions are bulit on the top of the **Serial Communication function**. The primary purpose of them are to change or read the logic level. The make of these functions are built around the most popular Arduino Source Code.  
 Functions included are:
-- int get_reg_info(uint8_t);
-- void set_reg_info(uint8_t,uint8_t);
-- void init_board_port();
-- void pinMode(uint8_t,uint8_t);
-- void digitalWrite(uint8_t,uint8_t);
-- int digitalRead(uint8_t);  
+- int get_reg_info(int,uint8_t);
+- void set_reg_info(int,uint8_t,uint8_t);
+- void init_board_port(int);
+- void pinMode(int,uint8_t,uint8_t);
+- void digitalWrite(int,uint8_t,uint8_t);
+- int digitalRead(int,uint8_t);  
 
 *Error message of -2 is returned at the time of encounter.*  
 
