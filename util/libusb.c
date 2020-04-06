@@ -243,6 +243,7 @@ void set_reg_info(int fd,uint8_t reg,uint8_t value){
 void init_board_port(int fd){
 	int retry=0;
 	printf_d("INITILISATION",0);
+	printf("Initilising DDRB to 0xFF , PORTB to 0x00 , DDRD to 0x73 and PORTD to 0x00\n");
 	while((get_reg_info(fd,DDRB)!=0xFF || get_reg_info(fd,PORTB)!=0x00 || get_reg_info(fd,DDRD)!=0x73 || get_reg_info(fd,PORTD)!=0x00) && retry <3)
 	{
 		set_reg_info(fd,DDRB,0xFF);
@@ -264,7 +265,7 @@ void pinMode(int fd,uint8_t pin, uint8_t mode)
 	uint8_t port = digitalPinToPort(pin);
 	uint8_t ddreg,out;
 
-	if(port == NOT_A_PORT) {
+	if(port == NOT_A_PORT || !(pin > 1 && pin < 20)) {
 #if DP==1
 		printf("The Pin %d is not an I/O pin, kindly check!\n",pin);
 #endif
@@ -309,7 +310,7 @@ void digitalWrite(int fd,uint8_t pin, uint8_t val)
 	uint8_t port = digitalPinToPort(pin);
 	uint8_t out;
 
-	if(port == NOT_A_PORT) {
+	if(port == NOT_A_PORT || !(pin > 1 && pin < 20)) {
 #if DP==1
 		printf("The Pin %d is not an I/O pin, kindly check!\n",pin);
 #endif
@@ -338,7 +339,7 @@ int digitalRead(int fd,uint8_t pin)
 	uint8_t port = digitalPinToPort(pin);
 	uint8_t in;
 
-	if(port == NOT_A_PORT) {
+	if(port == NOT_A_PORT || !(pin > 1 && pin < 20)) {
 #if DP==1
 		printf("The Pin %d is not an I/O pin, kindly check!\n",pin);
 #endif
