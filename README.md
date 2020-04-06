@@ -62,8 +62,12 @@ To compile the source code just run with make command. It will automate all the 
 To build do,
 > make program  
 
+To run the executable do,
+> sudo ./program
+
 To remove the executable file do,  
 > make clean
+
 ## Future Scope
 - SPI Communication
 - I2C Communication
