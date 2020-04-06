@@ -1,5 +1,10 @@
 # USB-CDC-Devices
 A Communication and Execution Code Driver for CDC Devices  
+> Currently works perfectly with AT902313 Microcontroller
+
+## What works?
+ 1. I/O Port Programming  
+## Description
 This repository consists of a driver program for working with the USB CDC Devices.  
 The driver program is split up into two parts, the Crawler and Util respectively.
 ## Crawler
@@ -59,6 +64,10 @@ To build do,
 
 To remove the executable file do,  
 > make clean
+## Future Scope
+- SPI Communication
+- I2C Communication
+- Other Internal Registers access
 ## References
 For more details visit the following links:
  1. http://www.recursion.jp/prose/avrcdc/cdc-io.html For CDC Device Firmware
