@@ -49,4 +49,13 @@ Functions amd Macros included are:
 - degrees(rad)
 - void printf_d(const char*,uint8_t);
 - void printf_d_v(const char*,uint8_t,uint8_t);
-- void delay(int);
+- void delay(int);  
+
+## Compilation
+To compile the source code just run with make command. It will automate all the neccessary task. Errors will be displayed at each stage if encountered. Inside the master directory:  
+
+To build do,
+> make program  
+
+To remove the executable file do,  
+> make clean
