@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include "libusb.h"
-
+#define PIN 7
 int main(void){
 	open_serial_port("/dev/ttyACM0",19200);
 	init_board_port();
-	pinMode(19,INPUT);
-	//digitalWrite(1,HIGH);
+	pinMode(PIN,OUTPUT);
+	digitalWrite(PIN,HIGH);
 	int value;
-	value = digitalRead(19);
+	value = digitalRead(PIN);
 	printf("The digital level at pin 19 is %d\n",value);
 	delay(1000);
 	printf("The delay of 1 second\n");

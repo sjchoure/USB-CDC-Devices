@@ -164,8 +164,8 @@ const uint8_t digital_pin_to_port[] = {
 	PD,
 	NOT_A_PORT,
 	NOT_A_PORT,
-	PD,
-	PD,
+	NOT_A_PORT,
+	NOT_A_PORT,
 	PD,
 	PD,
 	NOT_A_PORT,
@@ -187,8 +187,8 @@ const uint8_t digital_pin_to_bit_mask[] = {
 	_BV(1),
 	NOT_A_PIN,
 	NOT_A_PIN,
-	_BV(2),
-	_BV(3),
+	NOT_A_PIN,
+	NOT_A_PIN,
 	_BV(4),
 	_BV(5),
 	NOT_A_PIN,
@@ -243,12 +243,19 @@ void set_reg_info(uint8_t reg,uint8_t value){
 }
 
 void init_board_port(){
+	int retry=0;
 	printf_d("INITILISATION",0);
-	while(get_reg_info(DDRB)!=0xFF || get_reg_info(PORTB)!=0x00)
+	while((get_reg_info(DDRB)!=0xFF || get_reg_info(PORTB)!=0x00 || get_reg_info(DDRD)!=0x73 || get_reg_info(PORTD)!=0x00) && retry <3)
 	{
 		set_reg_info(DDRB,0xFF);
 		set_reg_info(PORTB,0x00);
+		set_reg_info(DDRD,0x73);
+		set_reg_info(PORTD,0x00);
+		retry++;
 	}
+	if(retry >= 3) 
+		printf("Initilisation failed!, kindly replug\n");
+
 	printf_d("INITILISATION",0);
 }
 
@@ -259,7 +266,12 @@ void pinMode(uint8_t pin, uint8_t mode)
 	uint8_t port = digitalPinToPort(pin);
 	uint8_t ddreg,out;
 
-	if(port == NOT_A_PORT) return;
+	if(port == NOT_A_PORT) {
+#if DP==1
+		printf("The Pin %d is not an I/O pin, kindly check!\n",pin);
+#endif
+		return;
+	}
 
 	ddreg = portModeRegister(port);
 	out = portOutputRegister(port);
@@ -299,7 +311,12 @@ void digitalWrite(uint8_t pin, uint8_t val)
 	uint8_t port = digitalPinToPort(pin);
 	uint8_t out;
 
-	if(port == NOT_A_PIN) return;
+	if(port == NOT_A_PORT) {
+#if DP==1
+		printf("The Pin %d is not an I/O pin, kindly check!\n",pin);
+#endif
+		return;
+	}
 
 	out = portOutputRegister(port);
 	//Getting status of the IO register
@@ -323,7 +340,12 @@ int digitalRead(uint8_t pin)
 	uint8_t port = digitalPinToPort(pin);
 	uint8_t in;
 
-	if(port == NOT_A_PIN) return LOW;
+	if(port == NOT_A_PORT) {
+#if DP==1
+		printf("The Pin %d is not an I/O pin, kindly check!\n",pin);
+#endif
+		return LOW;
+	}
 	
 	in = portInputRegister(port);
 	//Getting the status of the IO Register
