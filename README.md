@@ -68,6 +68,8 @@ To run the executable do,
 To remove the executable file do,  
 > make clean
 
+To disable the Debugging Print Statements make #define DP 0 from 1 in util/libusb.h, this will make all logs to disable.
+
 ## Future Scope
 - SPI Communication
 - I2C Communication
