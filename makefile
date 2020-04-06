@@ -4,11 +4,11 @@ H_Lib = ./util/libusb.h
 H_Lib_Loc = ./util
 Target = program
 
-program: program.o libusb.a
+program: libusb.a program.o
 	$(info ***********************Building program.out***********************)
 	gcc -o ${Target} program.o -L. -lusb
 
-program.o: ${SRC_Main} ${H_Lib}
+program.o: ${SRC_Main} ${H_Lib} 
 	$(info ************************Building program.o************************)
 	gcc -c ${SRC_Main} -I${H_Lib_Loc}
 
