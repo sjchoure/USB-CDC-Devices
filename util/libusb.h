@@ -7,11 +7,10 @@
 #define HIGH 0x1
 
 /*********************USB Definitions********************************/
-extern int fd;
 int open_serial_port(const char*,int);
-int serial_write(int*,const char*);
-int serial_read(int*);
-void close_serial_port(int*);
+int serial_write(int,const char*);
+int serial_read(int);
+void close_serial_port(int);
 
 /*********************ADDONS****************************************/
 #define PI 3.1415926535897932384626433832795
@@ -60,11 +59,11 @@ void delay(int);
 #define portModeRegister(P) (*(port_to_mode + (P) - 1))
 
 /****************************Modifying PIN*************************/
-int get_reg_info(uint8_t);
-void set_reg_info(uint8_t,uint8_t);
-void init_board_port();
-void pinMode(uint8_t,uint8_t);
-void digitalWrite(uint8_t,uint8_t);
-int digitalRead(uint8_t);
+int get_reg_info(int,uint8_t);
+void set_reg_info(int,uint8_t,uint8_t);
+void init_board_port(int);
+void pinMode(int,uint8_t,uint8_t);
+void digitalWrite(int,uint8_t,uint8_t);
+int digitalRead(int,uint8_t);
 
 

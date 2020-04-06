@@ -15,11 +15,9 @@
  * Returns the file descriptor on success or -1 on error.
  */
 
-int fd;
-
 int open_serial_port(const char* port_name,int baudrate)
 {
-	//int fd; File descriptor for the port
+	int fd; //File descriptor for the port
 	struct termios options;
 
 	fd = open(port_name, O_RDWR | O_NOCTTY | O_NDELAY);
@@ -81,8 +79,8 @@ int open_serial_port(const char* port_name,int baudrate)
 	return (fd);
 }
 
-int serial_write(int *fd,const char* data){
-	int n = write(*fd, data, strlen(data));
+int serial_write(int fd,const char* data){
+	int n = write(fd, data, strlen(data));
 	if (n<0){
 		return -1;
 	}
@@ -90,14 +88,14 @@ int serial_write(int *fd,const char* data){
 		return n;
 }
 
-int serial_read(int *fd){
+int serial_read(int fd){
 	char *buffer; /* Input Buffer */
 	buffer = (char *)calloc(10,sizeof(char));
 	char *bufptr;      /* Current char in buffer */
 	int  nbytes;       /* Number of bytes read */
 	/* read characters into our string buffer until we get a CR or NL */
 	bufptr = buffer;
-	while ((nbytes = read(*fd, bufptr, buffer + sizeof(buffer) - bufptr - 1)) > 0)
+	while ((nbytes = read(fd, bufptr, buffer + sizeof(buffer) - bufptr - 1)) > 0)
 	{
 		bufptr += nbytes;
 		if (bufptr[-1] == '\n' || bufptr[-1] == '\r')
@@ -112,8 +110,8 @@ int serial_read(int *fd){
 	return num;
 }
 
-void close_serial_port(int *fd){
-	close(*fd);
+void close_serial_port(int fd){
+	close(fd);
 }
 //ADDONS
 void printf_d(const char* p,uint8_t pin){
@@ -206,51 +204,51 @@ const uint8_t digital_pin_to_bit_mask[] = {
 
 //Modifying PIN Functions
 
-int get_reg_info(uint8_t reg){
+int get_reg_info(int fd,uint8_t reg){
 	int status;
 	char data[10];
 	sprintf(data,"%02X ? ",reg);
 #if DP==1
 	printf("(Getting)Req:%s\t",data);
 #endif
-	if(serial_write(&fd,data)==-1)
+	if(serial_write(fd,data)==-1)
 	{
 		printf("serial_write() of %ld bytes failed! err(-1)\n",strlen(data));
 		return -2;
 	}
-	status = serial_read(&fd);
+	status = serial_read(fd);
 #if DP==1
 	printf("Res:%02X\n",status);
 #endif
 	return status;
 }
 
-void set_reg_info(uint8_t reg,uint8_t value){
+void set_reg_info(int fd,uint8_t reg,uint8_t value){
 	int status;
 	char data[10];
 	sprintf(data,"%02X %02X = ",value, reg);
 #if DP==1
 	printf("(Setting)Req:%s\t",data);
 #endif
-	if(serial_write(&fd,data)==-1)
+	if(serial_write(fd,data)==-1)
 	{
 		printf("serial_write() of %ld bytes failed! err(-1)\n",strlen(data));
 	}
-	status = serial_read(&fd);
+	status = serial_read(fd);
 #if DP==1
 	printf("Res:%02X\n",value);
 #endif
 }
 
-void init_board_port(){
+void init_board_port(int fd){
 	int retry=0;
 	printf_d("INITILISATION",0);
-	while((get_reg_info(DDRB)!=0xFF || get_reg_info(PORTB)!=0x00 || get_reg_info(DDRD)!=0x73 || get_reg_info(PORTD)!=0x00) && retry <3)
+	while((get_reg_info(fd,DDRB)!=0xFF || get_reg_info(fd,PORTB)!=0x00 || get_reg_info(fd,DDRD)!=0x73 || get_reg_info(fd,PORTD)!=0x00) && retry <3)
 	{
-		set_reg_info(DDRB,0xFF);
-		set_reg_info(PORTB,0x00);
-		set_reg_info(DDRD,0x73);
-		set_reg_info(PORTD,0x00);
+		set_reg_info(fd,DDRB,0xFF);
+		set_reg_info(fd,PORTB,0x00);
+		set_reg_info(fd,DDRD,0x73);
+		set_reg_info(fd,PORTD,0x00);
 		retry++;
 	}
 	if(retry >= 3) 
@@ -259,7 +257,7 @@ void init_board_port(){
 	printf_d("INITILISATION",0);
 }
 
-void pinMode(uint8_t pin, uint8_t mode)
+void pinMode(int fd,uint8_t pin, uint8_t mode)
 {	
 	printf_d_v("PINMODE",pin,mode);
 	uint8_t bit = digitalPinToBitMask(pin);
@@ -280,31 +278,31 @@ void pinMode(uint8_t pin, uint8_t mode)
 #endif	
 	//Getting Status of the IO registers
 	uint8_t ddreg_value, out_value;
-	ddreg_value = get_reg_info(ddreg);
-	out_value = get_reg_info(out);
+	ddreg_value = get_reg_info(fd,ddreg);
+	out_value = get_reg_info(fd,out);
 
 	if(mode == INPUT){
 		ddreg_value &= ~(bit);
-		set_reg_info(ddreg,ddreg_value);
+		set_reg_info(fd,ddreg,ddreg_value);
 
 		out_value &= ~(bit);
-		set_reg_info(out,out_value);		
+		set_reg_info(fd,out,out_value);		
 	}
 	else if(mode == INPUT_PULLUP){
 		ddreg_value &= ~(bit);
-		set_reg_info(ddreg,ddreg_value);
+		set_reg_info(fd,ddreg,ddreg_value);
 
 		out_value |= bit;
-		set_reg_info(out,out_value);
+		set_reg_info(fd,out,out_value);
 	}
 	else {
 		ddreg_value |= bit;
-		set_reg_info(ddreg,ddreg_value);
+		set_reg_info(fd,ddreg,ddreg_value);
 	}
 	printf_d_v("PINMODE",pin,mode);
 }
 
-void digitalWrite(uint8_t pin, uint8_t val)
+void digitalWrite(int fd,uint8_t pin, uint8_t val)
 {
 	printf_d_v("DIGITALWRITE",pin,val);
 	uint8_t bit = digitalPinToBitMask(pin);
@@ -321,19 +319,19 @@ void digitalWrite(uint8_t pin, uint8_t val)
 	out = portOutputRegister(port);
 	//Getting status of the IO register
 	uint8_t out_value;
-	out_value = get_reg_info(out);
+	out_value = get_reg_info(fd,out);
 	if(val == LOW) {
 		out_value &= ~(bit);
-		set_reg_info(out,out_value);
+		set_reg_info(fd,out,out_value);
 	}
 	else {
 		out_value |= bit;
-		set_reg_info(out,out_value);
+		set_reg_info(fd,out,out_value);
 	}
 	printf_d_v("DIGITALWRITE",pin,val);
 }
 
-int digitalRead(uint8_t pin)
+int digitalRead(int fd,uint8_t pin)
 {
 	printf_d("DIGITALREAD",pin);
 	uint8_t bit = digitalPinToBitMask(pin);
@@ -349,7 +347,7 @@ int digitalRead(uint8_t pin)
 	
 	in = portInputRegister(port);
 	//Getting the status of the IO Register
-	uint8_t in_value = get_reg_info(in);
+	uint8_t in_value = get_reg_info(fd,in);
 	
 	printf_d("DIGITALREAD",pin);
 	if(in_value & bit) return HIGH;
