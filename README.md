@@ -1,22 +1,19 @@
 # USB-CDC-Devices
-A Commuincation and Execution Code Driver for CDC Devices
-
-This repository consists of driver program for working with the USB CDC Devices.  
+A Communication and Execution Code Driver for CDC Devices  
+This repository consists of a driver program for working with the USB CDC Devices.  
 The driver program is split up into two parts, the Crawler and Util respectively.
 ## Crawler
-The crawler part contains the main function to make your logic work. It is used to call functions from the util part to handle various stuffs. *It can be found inside the src/ directory.*
+The crawler part contains the main function to make your logic work. It is used to call functions from the util part to handle various kinds of stuff. *It can be found inside the src/ directory.*
 ## Util
-The util part is where the real magic happens. It consists of functions, which resides inside a library, libusb. The libusb is a static library. *It can be found inside the util/ directory.*  
+The util part is where the real magic happens. It consists of functions, which reside inside a library, libusb. The libusb is a static library. *It can be found inside the util/ directory.*   
 There are three types of functions defined inside the library. These are as follows:
-
- 1. **Serial Communication functions**
- 2. **Pin Manipulation functions**
- 3. **Addon functions and Macros**
+ 1. Serial Communication functions
+ 2. Pin Manipulation functions
+ 3. Addon functions and Macros  
  
-Each of these functions carry importance of their own. Let's understand what each of these function perform.
-
-### Serial Commuincation functions
-These are in the lowest level in the function heiarchy. These functions facilitates the use of serial communication protocol in our program. These functions are mainly based around the terminos library.  
+Each of these functions carries the importance of their own. Let's understand what each of these functions performs.
+### Serial Communication functions
+These are at the lowest level in the function hierarchy. These functions facilitate the use of serial communication protocol in our program. These functions are mainly based around the terminos library.  
 Functions included are:
 - extern int fd;
 - int open_serial_port(const char*,int);
