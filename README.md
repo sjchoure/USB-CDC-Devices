@@ -44,7 +44,7 @@ Functions included are:
 
 ### Addon Functions and Macros
 These are in the used for extending the functionality of the library. These are really simple and basic functions to make life much easier.  
-Functions amd Macros included are:  
+Functions and Macros included are:  
 - min(a,b)
 - max(a,b)
 - abs(x)
