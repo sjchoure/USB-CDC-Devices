@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "libusb.h"
-#define PIN 7
+#define PIN 19
 int main(void){
 	open_serial_port("/dev/ttyACM0",19200);
 	init_board_port();
