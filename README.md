@@ -59,3 +59,7 @@ To build do,
 
 To remove the executable file do,  
 > make clean
+## References
+For more details visit the following links:
+ 1. http://www.recursion.jp/prose/avrcdc/cdc-io.html For CDC Device Firmware
+ 2. https://www.cmrr.umn.edu/~strupp/serial.html For Serial Communication in POSIX
