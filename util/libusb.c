@@ -1,0 +1,335 @@
+#include <stdio.h>   /* Standard input/output definitions */
+#include <string.h>  /* String function definitions */
+#include <unistd.h>  /* UNIX standard function definitions */
+#include <fcntl.h>   /* File control definitions */
+#include <errno.h>   /* Error number definitions */
+#include <termios.h> /* POSIX terminal control definitions */
+#include <stdlib.h>  /* Calloc and Malloc function definitions */
+#include <stdint.h>  /* uintx_t definitions */
+#include <time.h>    /* Clock Definitions for Delay function */
+#include "libusb.h"
+// USB Definitions
+/*
+ * 'open_port()' - Open serial port 1.
+ *
+ * Returns the file descriptor on success or -1 on error.
+ */
+
+int fd;
+
+int open_serial_port(const char* port_name,int baudrate)
+{
+	//int fd; File descriptor for the port
+	struct termios options;
+
+	fd = open(port_name, O_RDWR | O_NOCTTY | O_NDELAY);
+	if (fd == -1)
+	{
+		/*
+		 * Could not open the port.
+		 */
+		perror("");
+		fprintf(stderr, "open_port: Unable to open %s\n", port_name);
+		return -1;
+	}
+	else{
+		fcntl(fd, F_SETFL, 0);
+
+		/*
+		 * Get the current options for the port...
+		 */
+
+		tcgetattr(fd, &options);
+
+		/*
+		 * Set the baud rates
+		 */
+		switch(baudrate){
+			case 19200:
+				cfsetispeed(&options, B19200);
+				cfsetospeed(&options, B19200);
+				break;
+			case 9600:
+				cfsetispeed(&options,B9600);
+				cfsetospeed(&options,B9600);
+				break;
+			default:
+				cfsetispeed(&options,B4800);
+				cfsetospeed(&options,B4800);
+				break;
+		}
+
+		cfsetispeed(&options, B9600);
+		cfsetospeed(&options, B9600);
+
+		/*
+		 * Enable the receiver, set local mode, set the parity to 8N1 and character size of 8 bits
+		 */
+
+		options.c_cflag |= (CLOCAL | CREAD);
+		options.c_cflag &= ~PARENB;
+		options.c_cflag &= ~CSTOPB;
+		options.c_cflag &= ~CSIZE;
+		options.c_cflag |= CS8;
+
+		/*
+		 * Set the new options for the port...
+		 */
+
+		tcsetattr(fd, TCSANOW, &options);
+	}
+	return (fd);
+}
+
+int serial_write(int *fd,const char* data){
+	int n = write(*fd, data, strlen(data));
+	if (n<0){
+		return -1;
+	}
+	else
+		return n;
+}
+
+int serial_read(int *fd){
+	char *buffer; /* Input Buffer */
+	buffer = (char *)calloc(10,sizeof(char));
+	char *bufptr;      /* Current char in buffer */
+	int  nbytes;       /* Number of bytes read */
+	/* read characters into our string buffer until we get a CR or NL */
+	bufptr = buffer;
+	while ((nbytes = read(*fd, bufptr, buffer + sizeof(buffer) - bufptr - 1)) > 0)
+	{
+		bufptr += nbytes;
+		if (bufptr[-1] == '\n' || bufptr[-1] == '\r')
+			break;
+	}
+
+	/* nul terminate the string and see if we got an OK response */
+	*(bufptr-2) = '\0';
+	//printf("serial_read(): %s\n",buffer);
+	int num = (int)strtol(buffer,NULL,16); //Hexadecimal string to Hexadecimal Int
+	free(buffer);
+	return num;
+}
+
+void close_serial_port(int *fd){
+	close(*fd);
+}
+//ADDONS
+void printf_d(const char* p,uint8_t pin){
+#if DP==1
+	printf("*********************%s %d*********************\n",p,pin);
+#endif
+}
+void printf_d_v(const char* p,uint8_t pin, uint8_t value){
+#if DP==1
+	printf("*********************%s %d %X*********************\n",p,pin,value);
+#endif
+}
+void delay(int milliseconds)
+{
+    long pause;
+    clock_t now,then;
+
+    pause = milliseconds*(CLOCKS_PER_SEC/1000);
+    now = then = clock();
+    while( (now-then) < pause )
+        now = clock();
+}
+//PIN Def
+const uint8_t port_to_mode[] = {
+	NOT_A_PORT,
+	DDRB,
+	NOT_A_PORT,
+	DDRD,
+};
+
+const uint8_t port_to_output[] = {
+	NOT_A_PORT,
+	PORTB,
+	NOT_A_PORT,
+	PORTD,
+};
+
+const uint8_t port_to_input[] = {
+	NOT_A_PORT,
+	PINB,
+	NOT_A_PORT,
+	PIND,
+};
+
+const uint8_t digital_pin_to_port[] = {
+	NOT_A_PORT,
+	PD,
+	PD,
+	NOT_A_PORT,
+	NOT_A_PORT,
+	PD,
+	PD,
+	PD,
+	PD,
+	NOT_A_PORT,
+	PD,
+	PB,
+	PB,
+	PB,
+	PB,
+	PB,
+	PB,
+	PB,
+	PB,
+	NOT_A_PORT,
+};
+
+const uint8_t digital_pin_to_bit_mask[] = {
+	NOT_A_PIN,
+	_BV(0),
+	_BV(1),
+	NOT_A_PIN,
+	NOT_A_PIN,
+	_BV(2),
+	_BV(3),
+	_BV(4),
+	_BV(5),
+	NOT_A_PIN,
+	_BV(6),
+	_BV(0),
+	_BV(1),
+	_BV(2),
+	_BV(3),
+	_BV(4),
+	_BV(5),
+	_BV(6),
+	_BV(7),
+	NOT_A_PIN,
+};
+
+//Modifying PIN Functions
+
+int get_reg_info(uint8_t reg){
+	int status;
+	char data[10];
+	sprintf(data,"%02X ? ",reg);
+#if DP==1
+	printf("(Getting)Req:%s\t",data);
+#endif
+	if(serial_write(&fd,data)==-1)
+	{
+		printf("serial_write() of %ld bytes failed! err(-1)\n",strlen(data));
+		return -2;
+	}
+	status = serial_read(&fd);
+#if DP==1
+	printf("Res:%02X\n",status);
+#endif
+	return status;
+}
+
+void set_reg_info(uint8_t reg,uint8_t value){
+	int status;
+	char data[10];
+	sprintf(data,"%02X %02X = ",value, reg);
+#if DP==1
+	printf("(Setting)Req:%s\t",data);
+#endif
+	if(serial_write(&fd,data)==-1)
+	{
+		printf("serial_write() of %ld bytes failed! err(-1)\n",strlen(data));
+	}
+	status = serial_read(&fd);
+#if DP==1
+	printf("Res:%02X\n",value);
+#endif
+}
+
+void init_board_port(){
+	printf_d("INITILISATION",0);
+	while(get_reg_info(DDRB)!=0xFF || get_reg_info(PORTB)!=0x00)
+	{
+		set_reg_info(DDRB,0xFF);
+		set_reg_info(PORTB,0x00);
+	}
+	printf_d("INITILISATION",0);
+}
+
+void pinMode(uint8_t pin, uint8_t mode)
+{	
+	printf_d_v("PINMODE",pin,mode);
+	uint8_t bit = digitalPinToBitMask(pin);
+	uint8_t port = digitalPinToPort(pin);
+	uint8_t ddreg,out;
+
+	if(port == NOT_A_PORT) return;
+
+	ddreg = portModeRegister(port);
+	out = portOutputRegister(port);
+#if DP==1
+	printf("The bit = %X,port = %d,ddreg = %X,out_reg = %X\n",bit,port,ddreg,out);
+#endif	
+	//Getting Status of the IO registers
+	uint8_t ddreg_value, out_value;
+	ddreg_value = get_reg_info(ddreg);
+	out_value = get_reg_info(out);
+
+	if(mode == INPUT){
+		ddreg_value &= ~(bit);
+		set_reg_info(ddreg,ddreg_value);
+
+		out_value &= ~(bit);
+		set_reg_info(out,out_value);		
+	}
+	else if(mode == INPUT_PULLUP){
+		ddreg_value &= ~(bit);
+		set_reg_info(ddreg,ddreg_value);
+
+		out_value |= bit;
+		set_reg_info(out,out_value);
+	}
+	else {
+		ddreg_value |= bit;
+		set_reg_info(ddreg,ddreg_value);
+	}
+	printf_d_v("PINMODE",pin,mode);
+}
+
+void digitalWrite(uint8_t pin, uint8_t val)
+{
+	printf_d_v("DIGITALWRITE",pin,val);
+	uint8_t bit = digitalPinToBitMask(pin);
+	uint8_t port = digitalPinToPort(pin);
+	uint8_t out;
+
+	if(port == NOT_A_PIN) return;
+
+	out = portOutputRegister(port);
+	//Getting status of the IO register
+	uint8_t out_value;
+	out_value = get_reg_info(out);
+	if(val == LOW) {
+		out_value &= ~(bit);
+		set_reg_info(out,out_value);
+	}
+	else {
+		out_value |= bit;
+		set_reg_info(out,out_value);
+	}
+	printf_d_v("DIGITALWRITE",pin,val);
+}
+
+int digitalRead(uint8_t pin)
+{
+	printf_d("DIGITALREAD",pin);
+	uint8_t bit = digitalPinToBitMask(pin);
+	uint8_t port = digitalPinToPort(pin);
+	uint8_t in;
+
+	if(port == NOT_A_PIN) return LOW;
+	
+	in = portInputRegister(port);
+	//Getting the status of the IO Register
+	uint8_t in_value = get_reg_info(in);
+	
+	printf_d("DIGITALREAD",pin);
+	if(in_value & bit) return HIGH;
+	return LOW;
+}
