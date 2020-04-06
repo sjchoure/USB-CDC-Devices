@@ -31,6 +31,6 @@ int main(void){
 
 	printf("The digital level at pin %d is %d\n",PIN,value);
 
-	//Alway close the respective opened file descriptor. C does not support garabage collection
+	//Alway close the respective opened file descriptor. C does not support garbage collection
 	close_serial_port(fd1);
 }
