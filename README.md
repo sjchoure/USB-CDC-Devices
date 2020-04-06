@@ -1,6 +1,6 @@
 # USB-CDC-Devices
 A Communication and Execution Code Driver for CDC Devices  
-> Currently works perfectly with AT902313 Microcontroller
+> Currently works perfectly with AT90S2313 Microcontroller
 
 ## What works?
  1. I/O Port Programming  
