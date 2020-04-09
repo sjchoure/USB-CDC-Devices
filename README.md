@@ -47,7 +47,6 @@ These are in the used for extending the functionality of the library. These are 
 Functions and Macros included are:  
 - min(a,b)
 - max(a,b)
-- abs(x)
 - round(x)     
 - sq(x)
 - radians(deg) 
