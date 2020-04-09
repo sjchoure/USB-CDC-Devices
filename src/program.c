@@ -15,7 +15,7 @@ int main(void){
 	//Example of a digital write for HIGH at a pin
 	digitalWrite(fd1,18,LOW);
 
-	//Example of a delay in microsecond
+	//Example of a delay in millisecond
 	delay(100);
 
 	//Example of a digital write for LOW at a pin
