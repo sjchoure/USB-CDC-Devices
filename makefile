@@ -1,12 +1,12 @@
-SRC_Main = ./src/program.c
+Target = thread
+SRC_Main = ./src/${Target}.c
 SRC_Lib = ./util/libusb.c
 H_Lib = ./util/libusb.h
 H_Lib_Loc = ./util
-Target = program
 
 program: libusb.a program.o
 	$(info ***********************Building program.out***********************)
-	gcc -o ${Target} program.o -L. -lusb
+	gcc -o ${Target} ${Target}.o -L. -lusb -pthread
 
 program.o: ${SRC_Main} ${H_Lib} 
 	$(info ************************Building program.o************************)

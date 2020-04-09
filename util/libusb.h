@@ -20,6 +20,7 @@ void close_serial_port(int);
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define EULER 2.718281828459045235360287471352
 #define DP 1
+#define MT 1
 // undefine stdlib's abs if encountered
 #ifdef abs
 #undef abs
@@ -27,7 +28,7 @@ void close_serial_port(int);
 
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))
-#define abs(x) ((x)>0?(x):-(x))
+//#define abs(x) ((x)>0?(x):-(x))
 #define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
 #define sq(x) ((x)*(x))
 #define radians(deg) ((deg)*DEG_TO_RAD)
@@ -60,8 +61,8 @@ void delay(int);
 
 /****************************Modifying PIN*************************/
 int get_reg_info(int,uint8_t);
-void set_reg_info(int,uint8_t,uint8_t);
-void init_board_port(int);
+int set_reg_info(int,uint8_t,uint8_t);
+int init_board_port(int);
 void pinMode(int,uint8_t,uint8_t);
 void digitalWrite(int,uint8_t,uint8_t);
 int digitalRead(int,uint8_t);

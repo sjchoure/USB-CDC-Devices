@@ -7,6 +7,7 @@
 #include <stdlib.h>  /* Calloc and Malloc function definitions */
 #include <stdint.h>  /* uintx_t definitions */
 #include <time.h>    /* Clock Definitions for Delay function */
+#include <pthread.h>
 #include "libusb.h"
 // USB Definitions
 /*
@@ -14,7 +15,9 @@
  *
  * Returns the file descriptor on success or -1 on error.
  */
-
+#if MT==1
+pthread_mutex_t serial_port_mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
 int open_serial_port(const char* port_name,int baudrate)
 {
 	int fd; //File descriptor for the port
@@ -27,7 +30,7 @@ int open_serial_port(const char* port_name,int baudrate)
 		 * Could not open the port.
 		 */
 		perror("");
-		fprintf(stderr, "open_port: Unable to open %s\n", port_name);
+		fprintf(stderr, "open_serial_port: Unable to open %s\n", port_name);
 		return -1;
 	}
 	else{
@@ -46,19 +49,24 @@ int open_serial_port(const char* port_name,int baudrate)
 			case 19200:
 				cfsetispeed(&options, B19200);
 				cfsetospeed(&options, B19200);
+				printf("Baudrate: 19200\n");
 				break;
 			case 9600:
 				cfsetispeed(&options,B9600);
 				cfsetospeed(&options,B9600);
+				printf("Baudrate: 9600\n");
+				break;
+			case 115200:
+				cfsetispeed(&options,B115200);
+				cfsetospeed(&options,B115200);
+				printf("Baudrate :115200\n");
 				break;
 			default:
 				cfsetispeed(&options,B4800);
 				cfsetospeed(&options,B4800);
+				printf("Default BAUDRATE\n");
 				break;
 		}
-
-		cfsetispeed(&options, B9600);
-		cfsetospeed(&options, B9600);
 
 		/*
 		 * Enable the receiver, set local mode, set the parity to 8N1 and character size of 8 bits
@@ -80,7 +88,13 @@ int open_serial_port(const char* port_name,int baudrate)
 }
 
 int serial_write(int fd,const char* data){
+#if MT == 1
+	pthread_mutex_lock( &serial_port_mutex );
+#endif
 	int n = write(fd, data, strlen(data));
+#if MT == 1
+	pthread_mutex_unlock( &serial_port_mutex );
+#endif
 	if (n<0){
 		return -1;
 	}
@@ -95,13 +109,18 @@ int serial_read(int fd){
 	int  nbytes;       /* Number of bytes read */
 	/* read characters into our string buffer until we get a CR or NL */
 	bufptr = buffer;
+#if MT == 1
+	pthread_mutex_lock( &serial_port_mutex);
+#endif
 	while ((nbytes = read(fd, bufptr, buffer + sizeof(buffer) - bufptr - 1)) > 0)
 	{
 		bufptr += nbytes;
 		if (bufptr[-1] == '\n' || bufptr[-1] == '\r')
 			break;
 	}
-
+#if MT == 1
+	pthread_mutex_unlock( &serial_port_mutex);
+#endif
 	/* nul terminate the string and see if we got an OK response */
 	*(bufptr-2) = '\0';
 	//printf("serial_read(): %s\n",buffer);
@@ -223,7 +242,7 @@ int get_reg_info(int fd,uint8_t reg){
 	return status;
 }
 
-void set_reg_info(int fd,uint8_t reg,uint8_t value){
+int set_reg_info(int fd,uint8_t reg,uint8_t value){
 	int status;
 	char data[10];
 	sprintf(data,"%02X %02X = ",value, reg);
@@ -233,14 +252,16 @@ void set_reg_info(int fd,uint8_t reg,uint8_t value){
 	if(serial_write(fd,data)==-1)
 	{
 		printf("serial_write() of %ld bytes failed! err(-1)\n",strlen(data));
+		return -2;
 	}
 	status = serial_read(fd);
 #if DP==1
 	printf("Res:%02X\n",value);
 #endif
+	return 0;
 }
 
-void init_board_port(int fd){
+int init_board_port(int fd){
 	int retry=0;
 	printf_d("INITILISATION",0);
 	printf("Initilising DDRB to 0xFF , PORTB to 0x00 , DDRD to 0x73 and PORTD to 0x00\n");
@@ -252,10 +273,13 @@ void init_board_port(int fd){
 		set_reg_info(fd,PORTD,0x00);
 		retry++;
 	}
-	if(retry >= 3) 
+	if(retry >= 3)
+	{	
 		printf("Initilisation failed!, kindly replug\n");
-
+		return -3;
+	}
 	printf_d("INITILISATION",0);
+	return 0;
 }
 
 void pinMode(int fd,uint8_t pin, uint8_t mode)
