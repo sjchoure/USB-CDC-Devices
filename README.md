@@ -62,6 +62,7 @@ To use threading, the library provides standard calls to the pthread.h library. 
 To get an idea about the threading see the example in src folder thread.c. It shows how to the threads can access each pin independent of what the other thread is doing.
 
 ## Compilation
+*For custom made source code place them inside the src folder or else you need to make changes in the makefile
 To compile the source code just run with make command. It will automate all the neccessary task. Errors will be displayed at each stage if encountered. Inside the master directory:  
 
 **To build a particular "file.c" inside the src folder do,**
