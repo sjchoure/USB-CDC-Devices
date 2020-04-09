@@ -32,8 +32,8 @@ Functions included are:
 These functions are bulit on the top of the **Serial Communication function**. The primary purpose of them are to change or read the logic level. The make of these functions are built around the most popular Arduino Source Code.  
 Functions included are:
 - int get_reg_info(int,uint8_t);
-- void set_reg_info(int,uint8_t,uint8_t);
-- void init_board_port(int);
+- int set_reg_info(int,uint8_t,uint8_t);
+- int init_board_port(int);
 - void pinMode(int,uint8_t,uint8_t);
 - void digitalWrite(int,uint8_t,uint8_t);
 - int digitalRead(int,uint8_t);  
@@ -54,19 +54,39 @@ Functions and Macros included are:
 - degrees(rad)
 - void printf_d(const char*,uint8_t);
 - void printf_d_v(const char*,uint8_t,uint8_t);
-- void delay(int);  
+- void delay(int); 
+#### Mutlithreading Addon
+To enable the Multithreading, make the #define MT 1 in util/libusb.h
+To use threading, the library provides standard calls to the pthread.h library. It uses a MUTEX named as serial_port_mutex for making the serial_port accessible to either of the thread.
+
+To get an idea about the threading see the example in src folder thread.c. It shows how to the threads can access each pin independent of what the other thread is doing.
 
 ## Compilation
 To compile the source code just run with make command. It will automate all the neccessary task. Errors will be displayed at each stage if encountered. Inside the master directory:  
 
-To build do,
-> make program  
+**To build a particular "file.c" inside the src folder do,**
+> make Target=file
 
-To run the executable do,
-> sudo ./program
+*Eg.* 
+> make Target=program  
+or  
+> make Target=thread
 
-To remove the executable file do,  
-> make clean
+**To run the executable do,**
+> sudo ./file
+
+*Eg.*
+> sudo ./program  
+or  
+> sudo ./thread
+
+**To remove the executable "file" do,**  
+> make clean Target=file
+
+*Eg.*
+> make clean Target=program  
+or  
+> make clean Target=thread
 
 To disable the Debugging Print Statements make #define DP 0 from 1 in util/libusb.h, this will make all logs to disable.
 
