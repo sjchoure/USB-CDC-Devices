@@ -33,4 +33,6 @@ int main(void){
 
 	//Alway close the respective opened file descriptor. C does not support garbage collection
 	close_serial_port(fd1);
+	
+	return 0;
 }
