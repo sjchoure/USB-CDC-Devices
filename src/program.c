@@ -2,7 +2,7 @@
 #include "libusb.h"
 int main(void){
 	//Create a File Descriptor for the serial port
-	int fd1 = open_serial_port("/dev/ttyACM0",19200);
+	int fd1 = open_serial_port("/dev/ttyACM0",115200);
 	if(fd1 < 0) return -1;
 
 	//Warning: Always initilise the cdc device before use, 
