@@ -15,7 +15,7 @@ The util part is where the real magic happens. It consists of functions, which r
 There are four types of functions defined inside the library. These are as follows:
  1. Serial Communication functions
  2. Pin Manipulation functions  
-		2.1 Pin & Ports Definintions
+		2.1 Pin & Ports Definintions  
 		2.2 Helper Functions
  3. Advance Features
  4. Addon functions and Macros  
