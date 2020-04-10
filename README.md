@@ -42,13 +42,13 @@ Functions included are:
 - digital_pin_to_port[]
 - digital_pin_to_bit_mask[]  
 2. Helper Functions  
-- int(Status of the register or Error(-2) Return) get_reg_info(int (File Descriptor),uint8_t(Register Address))
-- int(Success (0) or Error(-2) Return) set_reg_info(int (File Descriptor),uint8_t (Register Address) ,uint8_t (Value to Write))    
+- int(Status of the register or Error(-2) Return) ***get_reg_info***(int (File Descriptor),uint8_t(Register Address))
+- int(Success (0) or Error(-2) Return) ***set_reg_info***(int (File Descriptor),uint8_t (Register Address) ,uint8_t (Value to Write))    
 3. Pin Initialise, Read and Write Functions  
-- int(Success(0) or Error(-3) Return) init_board_port(int (File Descriptor))
-- void pinMode(int (File Descriptor),uint8_t(Pin Number),uint8_t(Mode: INPUT,INPUT_PULLUP,OUTPUT))
-- void digitalWrite(int (File Descriptor),uint8_t(Pin Number),uint8_t(State:HIGH or LOW))
-- int digitalRead(int (File Descriptor),uint8_t(Value:1 or 0))  
+- int(Success(0) or Error(-3) Return) ***init_board_port***(int (File Descriptor))
+- void ***pinMode***(int (File Descriptor),uint8_t(Pin Number),uint8_t(Mode: INPUT,INPUT_PULLUP,OUTPUT))
+- void ***digitalWrite***(int (File Descriptor),uint8_t(Pin Number),uint8_t(State:HIGH or LOW))
+- int(Value:1 or 0) ***digitalRead***(int (File Descriptor),uint8_t(Pin Number)  
 
 *Error message of -2 is returned at the time of encounter.*  
 
@@ -57,8 +57,8 @@ Functions included are:
 ### Advance Features
 BitBanged SPI Interface is supported by the devices. Currently only Master Out and Slave In communication is working. Work is still left for Master in Slave Out. Example of SPI can be found inside src/spi.c.  
 Functions Included are:  
-- uint8_t(Hex Value Return) asciitohex(char (ASCII Character))
-- uint8_t(MISO Received Data) spidata(int (File Descriptor),uint8_t(MOSI Pin),uint8_t(MISO Pin),uint8_t(SCK Pin),const char*(Data to be sent))  
+- uint8_t(Hex Value Return) ***asciitohex***(char (ASCII Character))
+- uint8_t(MISO Received Data) ***spidata***(int (File Descriptor),uint8_t(MOSI Pin),uint8_t(MISO Pin),uint8_t(SCK Pin),const char*(Data to be sent))  
 
 ### Addon Functions and Macros
 These are in the used for extending the functionality of the library. These are really simple and basic functions to make life much easier.  
