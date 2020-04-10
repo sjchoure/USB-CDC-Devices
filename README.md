@@ -24,10 +24,10 @@ Each of these functions carries the importance of their own. Let's understand wh
 ### Serial Communication functions
 These are at the lowest level in the function hierarchy. These functions facilitate the use of serial communication protocol in our program. These functions are mainly based around the terminos library.  
 Functions included are:
-- int(File Descriptor Return) open_serial_port(const char* (Port Name),int (Baudrate));
-- int(Success(0) or Error(-1) Return) serial_write(int (File Descriptor),const char*(Data to write));
-- int(Register Value or Error(-1) Return) serial_read(int (File Descriptor));
-- void close_serial_port(int (File Descriptor));
+- int(File Descriptor Return) open_serial_port(const char* (Port Name),int (Baudrate))
+- int(Success(0) or Error(-1) Return) serial_write(int (File Descriptor),const char*(Data to write))
+- int(Register Value or Error(-1) Return) serial_read(int (File Descriptor))
+- void close_serial_port(int (File Descriptor))
 
 *Error message of -1 is returned from each of the function at the time of encounter. Expect for close_serial_port()*
 
@@ -36,14 +36,14 @@ These functions are bulit on the top of the **Serial Communication function**. T
 Functions included are:  
 1. Helper Functions  
 	
-- int(Status of the register or Error(-2) Return) get_reg_info(int (File Descriptor),uint8_t(Register Address));
+- int(Status of the register or Error(-2) Return) get_reg_info(int (File Descriptor),uint8_t(Register Address))
 - int(Success (0) or Error(-2) Return) set_reg_info(int (File Descriptor),uint8_t (Register Address) ,uint8_t (Value to Write))    
 2. Pin Initialise, Read and Write Functions  
 	
-- int(Success(0) or Error(-3) Return) init_board_port(int (File Descriptor));
-- void pinMode(int (File Descriptor),uint8_t(Pin Number),uint8_t(Mode: INPUT,INPUT_PULLUP,OUTPUT));
-- void digitalWrite(int (File Descriptor),uint8_t(Pin Number),uint8_t(State:HIGH or LOW));
-- int digitalRead(int (File Descriptor),uint8_t(Value:1 or 0));  
+- int(Success(0) or Error(-3) Return) init_board_port(int (File Descriptor))
+- void pinMode(int (File Descriptor),uint8_t(Pin Number),uint8_t(Mode: INPUT,INPUT_PULLUP,OUTPUT))
+- void digitalWrite(int (File Descriptor),uint8_t(Pin Number),uint8_t(State:HIGH or LOW))
+- int digitalRead(int (File Descriptor),uint8_t(Value:1 or 0))  
 
 *Error message of -2 is returned at the time of encounter.*  
 
@@ -64,9 +64,9 @@ Functions and Macros included are:
 - sq(x)
 - radians(deg) 
 - degrees(rad)
-- void printf_d(const char*,uint8_t);
-- void printf_d_v(const char*,uint8_t,uint8_t);
-- void delay(int); 
+- void printf_d(const char*,uint8_t)
+- void printf_d_v(const char*,uint8_t,uint8_t)
+- void delay(int)   
 #### Mutlithreading Addon
 To enable the Multithreading, make the #define MT 1 in util/libusb.h
 To use threading, the library provides standard calls to the pthread.h library. It uses a MUTEX named as serial_port_mutex for making the serial_port accessible to either of the thread.
