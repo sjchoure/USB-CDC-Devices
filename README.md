@@ -24,23 +24,22 @@ Each of these functions carries the importance of their own. Let's understand wh
 ### Serial Communication functions
 These are at the lowest level in the function hierarchy. These functions facilitate the use of serial communication protocol in our program. These functions are mainly based around the terminos library.  
 Functions included are:
-- extern int fd;
-- int open_serial_port(const char*,int);
-- int serial_write(int,const char*);
-- int serial_read(int);
-- void close_serial_port(int);
+- int(File Descriptor Return) open_serial_port(const char* (Port Name),int (Baurate));
+- int(Error(-1) Return) serial_write(int (File Descriptor),const char*(Data to write));
+- int(Error(-1) Return) serial_read(int (File Descriptor));
+- void close_serial_port(int (File Descriptor));
 
 *Error message of -1 is returned from each of the function at the time of encounter. Expect for close_serial_port()*
 
 ### Pin Manipulation functions
 These functions are bulit on the top of the **Serial Communication function**. The primary purpose of them are to change or read the logic level. The make of these functions are built around the most popular Arduino Source Code.  
 Functions included are:
-- int get_reg_info(int,uint8_t);
-- int set_reg_info(int,uint8_t,uint8_t);
-- int init_board_port(int);
-- void pinMode(int,uint8_t,uint8_t);
-- void digitalWrite(int,uint8_t,uint8_t);
-- int digitalRead(int,uint8_t);  
+- int(Status of the register or Error(-2) Return) get_reg_info(int (File Descriptor),uint8_t(Register Address));
+- int(Success (0) or Error(-2) Return) set_reg_info(int (File Descriptor),uint8_t (Register Address) ,uint8_t (Value to Write));
+- int(Success(0) or Error(-3) Return) init_board_port(int (File Descriptor));
+- void pinMode(int (File Descriptor),uint8_t(Pin Number),uint8_t(Mode: INPUT,INPUT_PULLUP,OUTPUT));
+- void digitalWrite(int (File Descriptor),uint8_t(Pin Number),uint8_t(State:HIGH or LOW));
+- int digitalRead(int (File Descriptor),uint8_t(Value:1 or 0));  
 
 *Error message of -2 is returned at the time of encounter.*  
 
@@ -49,8 +48,8 @@ Functions included are:
 ### Advance Features
 BitBanged SPI Interface is supported by the devices. Currently only Master Out and Slave In communication is working. Work is still left for Master in Slave Out. Example of SPI can be found inside src/spi.c.  
 Functions Included are:  
-- uint8_t asciitohex(char)
-- uint8_t spidata(int,uint8_t,uint8_t,uint8_t,const char*)  
+- uint8_t(Hex Value Return) asciitohex(char (ASCII Character))
+- uint8_t(MISO Received Data) spidata(int (File Descriptor),uint8_t(MOSI Pin),uint8_t(MISO Pin),uint8_t(SCK Pin),const char*(Data to be sent))  
 
 ### Addon Functions and Macros
 These are in the used for extending the functionality of the library. These are really simple and basic functions to make life much easier.  
