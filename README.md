@@ -12,7 +12,7 @@ The driver program is split up into two parts, the Crawler and Util respectively
 The crawler part contains the main function to make your logic work. It is used to call functions from the util part to handle various kinds of stuff. *It can be found inside the src/ directory.*
 ## Util
 The util part is where the real magic happens. It consists of functions, which reside inside a library, libusb. The libusb is a static library. *It can be found inside the util/ directory.*   
-There are three types of functions defined inside the library. These are as follows:
+There are four types of functions defined inside the library. These are as follows:
  1. Serial Communication functions
  2. Pin Manipulation functions  
  3. Advance Features
