@@ -3,7 +3,8 @@ A Communication and Execution Code Driver for CDC Devices
 > Currently works perfectly with AT90S2313 Microcontroller
 
 ## What works?
- 1. I/O Port Programming  
+ 1. I/O Port Programming 
+ 2. SPI MOSI as Master  
 ## Description
 This repository consists of a driver program for working with the USB CDC Devices.  
 The driver program is split up into two parts, the Crawler and Util respectively.
@@ -13,8 +14,9 @@ The crawler part contains the main function to make your logic work. It is used 
 The util part is where the real magic happens. It consists of functions, which reside inside a library, libusb. The libusb is a static library. *It can be found inside the util/ directory.*   
 There are three types of functions defined inside the library. These are as follows:
  1. Serial Communication functions
- 2. Pin Manipulation functions
- 3. Addon functions and Macros  
+ 2. Pin Manipulation functions  
+ 3. Advance Features
+ 4. Addon functions and Macros  
  
 Each of these functions carries the importance of their own. Let's understand what each of these functions performs.
 ### Serial Communication functions
@@ -40,7 +42,13 @@ Functions included are:
 
 *Error message of -2 is returned at the time of encounter.*  
 
-*pinMode(), digitalWrite() and digitalRead() have inbuilt security feature. If the crawler program asks for a pin which is used for other usage apart from the I/O then the functions are not* ***EXECUTED.*** *They are returned with a warning message. Example includes use of pins such as Reset, XTAL1, XTAL2, VCC and GND*
+*pinMode(), digitalWrite() and digitalRead() have inbuilt security feature. If the crawler program asks for a pin which is used for other usage apart from the I/O then the functions are not* ***EXECUTED.*** *They are returned with a warning message. Example includes use of pins such as Reset, XTAL1, XTAL2, VCC and GND*  
+
+### Advance Features
+BitBanged SPI Interface is supported by the devices. Currently only Master Out and Slave In communication is working. Work is still left for Master in Slave Out. Example of SPI can be found inside src/spi.c.  
+Functions Included are:  
+- uint8_t asciitohex(char)
+- uint8_t spidata(int,uint8_t,uint8_t,uint8_t,const char*)  
 
 ### Addon Functions and Macros
 These are in the used for extending the functionality of the library. These are really simple and basic functions to make life much easier.  
@@ -91,7 +99,7 @@ or
 To disable the Debugging Print Statements make #define DP 0 from 1 in util/libusb.h, this will make all logs to disable.
 
 ## Future Scope
-- SPI Communication
+- SPI Communication as MISO
 - I2C Communication
 - Other Internal Registers access
 ## References
