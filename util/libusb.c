@@ -394,9 +394,9 @@ uint8_t asciitohex(char a){
 uint8_t spidata(int fd,uint8_t MOSI, uint8_t MISO, uint8_t SCK, const char* p)
 {
 #if DP==1
-	//printf("\n\n");
-	//printf_d("SPIDATA LSB_BITFIRST",0);
-	//printf("\n\n");
+	printf("\n\n");
+	printf_d("SPIDATA LSB_BITFIRST",0);
+	printf("\n\n");
 #endif
 	uint8_t receive = 0;
 	int i = 0;
@@ -404,23 +404,23 @@ uint8_t spidata(int fd,uint8_t MOSI, uint8_t MISO, uint8_t SCK, const char* p)
 	{
 		uint8_t value = asciitohex(p[i]);
 #if DP==1
-		//printf("ASCII %c to HEX %X\n",p[i],value);
+		printf("ASCII %c to HEX %X\n",p[i],value);
 #endif
 		for(int j = 0;j < 8;j++){
 #if DP==1
-			//printf("Bit %d:%X\n",j,bitRead(value,j));
+			printf("Bit %d:%X\n",j,bitRead(value,j));
 #endif
 			digitalWrite(fd,MOSI,bitRead(value,j));
 			digitalWrite(fd,SCK,HIGH);
-			//bitWrite(receive, j, digitalRead(fd,MISO)); // Capture MISO
+			//bitWrite(receive, j, digitalRead(fd,MISO)); // Capture MISO //FIXME
 			digitalWrite(fd,SCK, LOW);
 		}
 		i++;
 	}
 #if DP==1
-	//printf("\n\n");
-	//printf_d("SPIDATA LSB_BITFIRST",0);
-	//printf("\n\n");
+	printf("\n\n");
+	printf_d("SPIDATA LSB_BITFIRST",0);
+	printf("\n\n");
 #endif
 	return receive;
 }
