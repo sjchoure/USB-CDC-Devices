@@ -9,15 +9,12 @@
 #include <time.h>    /* Clock Definitions for Delay function */
 #include <pthread.h>
 #include "libusb.h"
-// USB Definitions
-/*
- * 'open_port()' - Open serial port 1.
- *
- * Returns the file descriptor on success or -1 on error.
- */
+
 #if MT==1
 pthread_mutex_t serial_port_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
+/**************************Serial Port Functions******************************/
+
 int open_serial_port(const char* port_name,int baudrate)
 {
 	int fd; //File descriptor for the port
@@ -145,15 +142,17 @@ void printf_d_v(const char* p,uint8_t pin, uint8_t value){
 }
 void delay(int milliseconds)
 {
-    long pause;
-    clock_t now,then;
+	long pause;
+	clock_t now,then;
 
-    pause = milliseconds*(CLOCKS_PER_SEC/1000);
-    now = then = clock();
-    while( (now-then) < pause )
-        now = clock();
+	pause = milliseconds*(CLOCKS_PER_SEC/1000);
+	now = then = clock();
+	while( (now-then) < pause )
+		now = clock();
 }
-//PIN Def
+
+/************************************PIN & PORT DEFINITIONS******************************/
+
 const uint8_t port_to_mode[] = {
 	NOT_A_PORT,
 	DDRB,
@@ -221,7 +220,7 @@ const uint8_t digital_pin_to_bit_mask[] = {
 	NOT_A_PIN,
 };
 
-//Modifying PIN Functions
+/***************HELPER PIN MANIPULATION FUNCTIONS************************/
 
 int get_reg_info(int fd,uint8_t reg){
 	int status;
@@ -281,6 +280,9 @@ int init_board_port(int fd){
 	printf_d("INITILISATION",0);
 	return 0;
 }
+
+/****************************PIN MANIPULATION FUNCTIONS*******************************/
+
 
 void pinMode(int fd,uint8_t pin, uint8_t mode)
 {	
@@ -369,12 +371,58 @@ int digitalRead(int fd,uint8_t pin)
 #endif
 		return LOW;
 	}
-	
+
 	in = portInputRegister(port);
 	//Getting the status of the IO Register
 	uint8_t in_value = get_reg_info(fd,in);
-	
+
 	printf_d("DIGITALREAD",pin);
 	if(in_value & bit) return HIGH;
 	return LOW;
 }
+
+/***************************ADVANCE FEATURES**************************************/
+
+uint8_t asciitohex(char a){
+	char h[3];
+	int num;
+	sprintf(h,"%02X",a);
+	num = (int)strtol(h,NULL,16); //Hexadecimal string to Hexadecimal Int
+	return num;
+}
+
+uint8_t spidata(int fd,uint8_t MOSI, uint8_t MISO, uint8_t SCK, const char* p)
+{
+#if DP==1
+	//printf("\n\n");
+	//printf_d("SPIDATA LSB_BITFIRST",0);
+	//printf("\n\n");
+#endif
+	uint8_t receive = 0;
+	int i = 0;
+	while(p[i] !='\0')
+	{
+		uint8_t value = asciitohex(p[i]);
+#if DP==1
+		//printf("ASCII %c to HEX %X\n",p[i],value);
+#endif
+		for(int j = 0;j < 8;j++){
+#if DP==1
+			//printf("Bit %d:%X\n",j,bitRead(value,j));
+#endif
+			digitalWrite(fd,MOSI,bitRead(value,j));
+			digitalWrite(fd,SCK,HIGH);
+			//bitWrite(receive, j, digitalRead(fd,MISO)); // Capture MISO
+			digitalWrite(fd,SCK, LOW);
+		}
+		i++;
+	}
+#if DP==1
+	//printf("\n\n");
+	//printf_d("SPIDATA LSB_BITFIRST",0);
+	//printf("\n\n");
+#endif
+	return receive;
+}
+
+
