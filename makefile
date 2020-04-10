@@ -1,4 +1,4 @@
-Target = thread
+Target = program
 SRC_Main = ./src/${Target}.c
 SRC_Lib = ./util/libusb.c
 H_Lib = ./util/libusb.h

@@ -67,4 +67,13 @@ void pinMode(int,uint8_t,uint8_t);
 void digitalWrite(int,uint8_t,uint8_t);
 int digitalRead(int,uint8_t);
 
+/***************************************************************/
+#define bitRead(value, bit) (((value) >> (bit)) & 0x01)
+#define bitSet(value, bit) ((value) |= (1UL << (bit)))
+#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
+#define bitToggle(value, bit) ((value) ^= (1UL << (bit)))
+#define bitWrite(value, bit, bitvalue) ((bitvalue) ? bitSet(value, bit) : bitClear(value, bit))
+
+uint8_t asciitohex(char);
+uint8_t spidata(int,uint8_t,uint8_t,uint8_t,const char*);
 
