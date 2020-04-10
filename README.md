@@ -33,9 +33,13 @@ Functions included are:
 
 ### Pin Manipulation functions
 These functions are bulit on the top of the **Serial Communication function**. The primary purpose of them are to change or read the logic level. The make of these functions are built around the most popular Arduino Source Code.  
-Functions included are:
+Functions included are:  
+1. Helper Functions  
+	
 - int(Status of the register or Error(-2) Return) get_reg_info(int (File Descriptor),uint8_t(Register Address));
-- int(Success (0) or Error(-2) Return) set_reg_info(int (File Descriptor),uint8_t (Register Address) ,uint8_t (Value to Write));
+- int(Success (0) or Error(-2) Return) set_reg_info(int (File Descriptor),uint8_t (Register Address) ,uint8_t (Value to Write))    
+2. Pin Initialise, Read and Write Functions  
+	
 - int(Success(0) or Error(-3) Return) init_board_port(int (File Descriptor));
 - void pinMode(int (File Descriptor),uint8_t(Pin Number),uint8_t(Mode: INPUT,INPUT_PULLUP,OUTPUT));
 - void digitalWrite(int (File Descriptor),uint8_t(Pin Number),uint8_t(State:HIGH or LOW));
