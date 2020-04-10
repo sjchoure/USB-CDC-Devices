@@ -4,7 +4,7 @@
 #include <time.h>
 #include <unistd.h>
 
-Arduino PIN to AT90S2313 PIN
+//Arduino PIN to AT90S2313 PIN
 
 // 13 - SCk - 19
 // 12 - MISO - 18
