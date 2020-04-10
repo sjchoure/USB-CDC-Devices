@@ -25,8 +25,8 @@ Each of these functions carries the importance of their own. Let's understand wh
 These are at the lowest level in the function hierarchy. These functions facilitate the use of serial communication protocol in our program. These functions are mainly based around the terminos library.  
 Functions included are:
 - int(File Descriptor Return) open_serial_port(const char* (Port Name),int (Baudrate));
-- int(Error(-1) Return) serial_write(int (File Descriptor),const char*(Data to write));
-- int(Error(-1) Return) serial_read(int (File Descriptor));
+- int(Success(0) or Error(-1) Return) serial_write(int (File Descriptor),const char*(Data to write));
+- int(Register Value or Error(-1) Return) serial_read(int (File Descriptor));
 - void close_serial_port(int (File Descriptor));
 
 *Error message of -1 is returned from each of the function at the time of encounter. Expect for close_serial_port()*
