@@ -29,20 +29,27 @@ There are four types of functions defined inside the library. These are as follo
  4. Addon functions and Macros  
  
 Each of these functions carries the importance of their own. Let's understand what each of these functions performs.
-### Serial Communication functions
+### Serial Communication functions and Macros
 These are at the lowest level in the function hierarchy. These functions facilitate the use of serial communication protocol in our program. These functions are mainly based around the terminos library.  
 Functions included are:
-- int(File Descriptor Return) open_serial_port(const char* (Port Name),int (Baudrate))
-- int(Success(0) or Error(-1) Return) serial_write(int (File Descriptor),const char*(Data to write))
-- int(Register Value or Error(-1) Return) serial_read(int (File Descriptor))
-- void close_serial_port(int (File Descriptor))
+1. Baudrate Array Definitions
+- baudrate_to_index[]
+- index_to_baurate_const[]
+2. Macros 
+- baurateToIndex(int (Index))
+- indexToBaudrate(int (Baudrate))
+3. Serial Communication Functions
+- int(File Descriptor Return) **open_serial_port**(const char* (Port Name),unsigned int (Baudrate))
+- int(Success(0) or Error(-1) Return) **serial_write**(int (File Descriptor),const char*(Data to write))
+- int(Register Value or Error(-1) Return) **serial_read**(int (File Descriptor))
+- void **close_serial_port**(int (File Descriptor))
 
 *Error message of -1 is returned from each of the function at the time of encounter. Expect for close_serial_port()*
 
 ### Pin Manipulation functions
 These functions are bulit on the top of the **Serial Communication function**. The primary purpose of them are to change or read the logic level. The make of these functions are built around the most popular Arduino Source Code.  
 Functions included are:  
-1. Pin and Port Definitions  
+1. Pin and Port Array Definitions   
 - port_to_mode[]
 - port_to_output[]
 - port_to_input[]
