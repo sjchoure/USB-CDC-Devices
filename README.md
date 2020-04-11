@@ -1,5 +1,6 @@
 # USB-CDC-Devices
-A Communication and Execution Code Driver for CDC Devices  
+A Communication and Execution Code Driver for CDC Devices 
+
 > Currently works perfectly with AT90S2313 Microcontroller
 
 ## What works?
