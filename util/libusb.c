@@ -15,10 +15,71 @@ pthread_mutex_t serial_port_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 /**************************Serial Port Functions******************************/
 
+int baudrate_to_index[] = {
+	0,
+	50,
+	75,
+	110,
+	134,
+	150,
+	200,
+	300,
+	600,
+	1200,
+	1800,
+	2400,
+	4800,
+	9600,
+	19200,
+	38400,
+	57600,
+	115200,
+	230400,
+	460800,
+	500000,
+	576000,
+	921600,
+	1000000,
+	1152000,
+	1500000,
+	2000000,
+};
+
+const speed_t index_to_baudrate_const[] = {
+	B0,
+	B50,
+	B75,
+	B110,
+	B134,
+	B150,
+	B200,
+	B300,
+	B600,
+	B1200,
+	B1800,
+	B2400,
+	B4800,
+	B9600,
+	B19200,
+	B38400,
+	B57600,
+	B115200,
+	B230400,
+	B460800,
+	B500000,
+	B576000,
+	B921600,
+	B1000000,
+	B1152000,
+	B1500000,
+	B2000000,
+};
+
 int open_serial_port(const char* port_name,int baudrate)
 {
 	int fd; //File descriptor for the port
 	struct termios options;
+	speed_t speed;
 
 	fd = open(port_name, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (fd == -1)
@@ -28,41 +89,39 @@ int open_serial_port(const char* port_name,int baudrate)
 		 */
 		perror("");
 		fprintf(stderr, "open_serial_port: Unable to open %s\n", port_name);
-		return -1;
+		exit(EXIT_FAILURE);
 	}
 	else{
 		fcntl(fd, F_SETFL, 0);
-
 		/*
 		 * Get the current options for the port...
 		 */
-
-		tcgetattr(fd, &options);
-
+		if (tcgetattr(fd, &options) != 0)
+		{
+    			perror("tcgetattr() error");
+			exit(EXIT_FAILURE);
+		}
 		/*
 		 * Set the baud rates
 		 */
-		switch(baudrate){
-			case 19200:
-				cfsetispeed(&options, B19200);
-				cfsetospeed(&options, B19200);
-				printf("Baudrate: 19200\n");
+		for(int i = 0; i <= 27 ; i++ ) {
+			if (i==27){
+				fprintf(stderr,"Unknown Baudrate\n");
+				exit(EXIT_FAILURE);
+			}
+			else if(baudrate == baudrateToIndex(i)){
+				if (cfsetospeed(&options, indexToBaudrateConst(i)) != 0)
+    					perror("cfsetospeed() error");
+				if (cfsetispeed(&options, indexToBaudrateConst(i)) != 0)
+					perror("cfsetispeed() error");
+#if DP==1
+				speed = cfgetispeed(&options);
+				printf("The Input speed is %lu and baudrate is %d\n", (unsigned long) speed, baudrate);
+				speed = cfgetospeed(&options);
+				printf("The Output speed is %lu and baudrate is %d\n", (unsigned long) speed, baudrate);
+#endif
 				break;
-			case 9600:
-				cfsetispeed(&options,B9600);
-				cfsetospeed(&options,B9600);
-				printf("Baudrate: 9600\n");
-				break;
-			case 115200:
-				cfsetispeed(&options,B115200);
-				cfsetospeed(&options,B115200);
-				printf("Baudrate :115200\n");
-				break;
-			default:
-				cfsetispeed(&options,B4800);
-				cfsetospeed(&options,B4800);
-				printf("Default BAUDRATE\n");
-				break;
+			}
 		}
 
 		/*
@@ -79,7 +138,11 @@ int open_serial_port(const char* port_name,int baudrate)
 		 * Set the new options for the port...
 		 */
 
-		tcsetattr(fd, TCSANOW, &options);
+		if(tcsetattr(fd, TCSANOW, &options) < 0)
+		{
+			perror("tcsetattr() error");
+			exit(EXIT_FAILURE);
+		}
 	}
 	return (fd);
 }
@@ -274,10 +337,9 @@ int init_board_port(int fd){
 	}
 	if(retry >= 3)
 	{	
-		printf("Initilisation failed!, kindly replug\n");
-		return -3;
+		fprintf(stderr,"Initilisation failed!, kindly replug\n");
+		exit(EXIT_FAILURE);
 	}
-	printf_d("INITILISATION",0);
 	return 0;
 }
 

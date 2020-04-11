@@ -12,6 +12,8 @@ int serial_write(int,const char*);
 int serial_read(int);
 void close_serial_port(int);
 
+#define baudrateToIndex(P) (*(baudrate_to_index + (P)))
+#define indexToBaudrateConst(P) (*(index_to_baudrate_const + (P))) 
 /*********************ADDONS****************************************/
 #define PI 3.1415926535897932384626433832795
 #define HALF_PI 1.5707963267948966192313216916398
