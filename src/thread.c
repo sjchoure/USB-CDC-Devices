@@ -12,11 +12,10 @@ int fd1;
 
 int main()
 {
-	fd1 = open_serial_port("/dev/ttyACM0",115200);
+	fd1 = open_serial_port("/dev/ttyACM0",1000000);
 
-	//Error Handling on the serial port and board initilisation
-	if(fd1 < 0) return -1;
-	if(init_board_port(fd1) < 0) return -1;
+	//Device initilisation
+	init_board_port(fd1)
 
 	pinMode(fd1,19,OUTPUT);
 	pinMode(fd1,18,OUTPUT);
