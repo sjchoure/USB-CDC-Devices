@@ -1,4 +1,4 @@
-# General I/O Pins via USB-CDC-Devices
+# General Purpose I/O Pins via USB-CDC-Devices
 A Communication and Execution Code Driver for CDC Devices   
 <figure>
 	<p align="center">
