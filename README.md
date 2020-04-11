@@ -1,5 +1,11 @@
 # USB-CDC-Devices
-A Communication and Execution Code Driver for CDC Devices 
+A Communication and Execution Code Driver for CDC Devices   
+<figure>
+	<p align="center">
+		<img src="https://github.com/saviourcode/USB-CDC-Devices/blob/master/image/block_diagram.png" alt='missing'>
+		<figcaption>Fig: Block Diagram of Device</figcaption>
+	</p> 
+</figure>
 
 > Currently works perfectly with AT90S2313 Microcontroller
 
