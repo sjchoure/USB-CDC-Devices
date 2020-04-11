@@ -1,5 +1,8 @@
 # General Purpose I/O Pins via USB-CDC-Devices
-A Communication and Execution Code Driver for CDC Devices   
+Add General Purpose Input and Output Pins to your Laptop/Desktop through your USB Port. 
+
+In this repository you will find all the resources needed to add gpio to your PC.  
+To make things work together perfectly, I have written a Device Driver Library which you can include in your program. It will make programming the gpio similar to the Arduino Environment, which is more user-friendly. 
 <figure>
 	<p align="center">
 		<img src="https://github.com/saviourcode/USB-CDC-Devices/blob/master/image/block_diagram.png" alt='missing'>
