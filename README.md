@@ -6,7 +6,7 @@ To make things work together perfectly, I have written a Device Driver Library w
 <figure>
 	<p align="center">
 		<img src="https://github.com/saviourcode/USB-CDC-Devices/blob/master/image/block_diagram.png" alt='missing'>
-		<figcaption>Fig: Block Diagram of Device</figcaption>
+		<figcaption>Fig: Block Diagram of the Device</figcaption>
 	</p> 
 </figure>
 
